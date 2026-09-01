@@ -1691,6 +1691,195 @@ a {
 }
 
 /* =========================================================
+   AI INCIDENTS SEARCH
+   ========================================================= */
+
+.history-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.history-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 280px;
+    height: 36px;
+}
+
+.history-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.history-search input {
+    width: 100%;
+    height: 36px;
+
+    padding: 0 34px 0 32px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    color: var(--text-soft);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: .3px;
+
+    outline: none;
+
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+}
+
+.history-search input::placeholder {
+    color: #55595a;
+}
+
+.history-search input:hover {
+    border-color: var(--border-light);
+    background: var(--surface-2);
+}
+
+.history-search input:focus {
+    border-color: rgba(245, 158, 11, .45);
+    box-shadow: 0 0 0 3px var(--amber-soft);
+}
+
+.history-search-clear {
+    position: absolute;
+    right: 7px;
+    top: 50%;
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+
+    background: transparent;
+    color: var(--text-muted);
+
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        color .18s ease,
+        background .18s ease;
+}
+
+.history-search-clear:hover {
+    color: var(--amber);
+    background: var(--amber-soft);
+}
+
+.history-results-meta {
+    margin: 0 0 10px;
+
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 8px;
+    letter-spacing: .7px;
+}
+
+
+/* =========================================================
+   SEARCH EMPTY STATE
+   ========================================================= */
+
+.incident-search-empty {
+    padding: 55px 30px;
+
+    text-align: center;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.incident-search-empty-icon {
+    margin-bottom: 14px;
+
+    color: var(--amber);
+
+    font-family: "JetBrains Mono", monospace;
+    font-size: 20px;
+}
+
+.incident-search-empty-title {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.incident-search-empty-description {
+    max-width: 430px;
+
+    margin: 8px auto 0;
+
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   SEARCH RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .history-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .history-search {
+        width: min(100%, 320px);
+    }
+}
+
+@media (max-width: 600px) {
+
+    .history-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .history-search {
+        width: 100%;
+    }
+
+    .history-clear-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
    INCIDENTLENS AI
    WORKSPACE VIEWS
    ========================================================= */
@@ -2065,5 +2254,583 @@ a {
 
     .incident-preview {
         grid-column: 1;
+    }
+}
+/* ============================================================
+   AI INCIDENTS - SEARCH AREA
+   ============================================================ */
+
+.history-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 10px;
+    min-width: 280px;
+}
+
+
+/* Search wrapper */
+
+.history-search {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    width: 280px;
+}
+
+
+/* Search icon */
+
+.history-search-icon {
+    order: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 28px;
+
+    margin-bottom: 2px;
+
+    color: var(--accent);
+    font-size: 22px;
+    line-height: 1;
+
+    opacity: 0.95;
+}
+
+
+/* Search title */
+
+.history-search::before {
+    content: "Search incidents";
+
+    order: 2;
+
+    display: block;
+
+    width: 100%;
+
+    margin-bottom: 8px;
+
+    color: var(--text-primary);
+
+    font-family: var(--font-sans);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    letter-spacing: 0.01em;
+
+    text-align: right;
+}
+
+
+/* Input */
+
+.history-search input {
+    order: 3;
+
+    box-sizing: border-box;
+
+    width: 280px;
+    height: 44px;
+
+    padding: 0 42px 0 16px;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    outline: none;
+
+    background: var(--surface);
+
+    color: var(--text-primary);
+
+    font-family: var(--font-mono);
+
+    font-size: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.history-search input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+
+.history-search input:focus {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 2px rgba(255, 170, 0, 0.10);
+}
+
+
+/* Hide the old icon positioning */
+
+.history-search .history-search-icon {
+    pointer-events: none;
+}
+
+
+/* Clear button */
+
+.history-search-clear {
+    position: absolute;
+
+    right: 10px;
+    bottom: 10px;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: var(--text-muted);
+
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+
+.history-search-clear:hover {
+    color: var(--text-primary);
+}
+
+
+/* ============================================================
+   SEARCH RESULT COUNT
+   ============================================================ */
+
+.history-results-meta {
+    margin-top: 16px;
+
+    color: var(--text-muted);
+
+    font-family: var(--font-mono);
+
+    font-size: 10px;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    .history-actions {
+        width: 100%;
+        min-width: 0;
+
+        align-items: stretch;
+    }
+
+    .history-search {
+        width: 100%;
+
+        align-items: stretch;
+    }
+
+    .history-search::before {
+        text-align: left;
+    }
+
+    .history-search-icon {
+        justify-content: flex-start;
+    }
+
+    .history-search input {
+        width: 100%;
+    }
+}
+/* ============================================================
+   AI INCIDENTS SEARCH — FINAL
+   ============================================================ */
+
+/* Search alanını sağ üstte tut */
+.history-actions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+}
+
+/* Search wrapper */
+.history-search {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    width: 320px;
+}
+
+/* Eski pseudo-element yazısını tamamen kaldır */
+.history-search::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Başlık */
+.history-search-label {
+    width: 100%;
+    margin-bottom: 8px;
+
+    color: var(--text-primary);
+
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    text-align: left;
+}
+
+/* Arama kutusu */
+.history-search input {
+    box-sizing: border-box;
+
+    width: 320px;
+    height: 44px;
+
+    padding: 0 16px 0 44px;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    outline: none;
+
+    background: var(--surface);
+
+    color: var(--text-primary);
+
+    font-family: var(--font-mono);
+    font-size: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Placeholder */
+.history-search input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+/* Focus */
+.history-search input:focus {
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 0 2px rgba(255, 170, 0, 0.10);
+}
+
+/* Search ikonu */
+.history-search-icon {
+    position: absolute;
+
+    left: 14px;
+    bottom: 12px;
+
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    color: var(--accent);
+
+    font-size: 18px;
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+/* Clear butonu */
+.history-search-clear {
+    position: absolute;
+
+    right: 10px;
+    bottom: 10px;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: var(--text-muted);
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    z-index: 3;
+}
+
+.history-search-clear:hover {
+    color: var(--text-primary);
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    .history-actions {
+        width: 100%;
+    }
+
+    .history-search {
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .history-search-label {
+        text-align: left;
+    }
+
+    .history-search input {
+        width: 100%;
+    }
+}
+/* =========================================================
+   SEARCH — FINAL CLEAN LAYOUT
+   ========================================================= */
+
+/* Search alanını yatay hizala */
+.history-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+
+/* Search container artık sadece ikon + input */
+.history-search {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+
+    width: 360px !important;
+    height: 42px !important;
+
+    position: relative !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Üstteki "Search incidents" yazısını TAMAMEN kaldır */
+.history-search::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Erişilebilirlik için kullanılan yazıyı gizle */
+.history-search .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* =========================================================
+   SEARCH ICON
+   ========================================================= */
+
+.history-search-icon {
+    position: static !important;
+
+    flex: 0 0 28px !important;
+
+    width: 28px !important;
+    height: 42px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #9a9a9a !important;
+
+    font-size: 22px !important;
+    line-height: 1 !important;
+
+    transform: none !important;
+}
+
+/* =========================================================
+   SEARCH INPUT
+   ========================================================= */
+
+.history-search input {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    height: 42px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+
+    padding: 0 14px !important;
+
+    background: #111315 !important;
+
+    border: 1px solid #292d31 !important;
+    border-radius: 7px !important;
+
+    outline: none !important;
+
+    color: #f2f2f2 !important;
+
+    font-family: inherit !important;
+    font-size: 13px !important;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease !important;
+}
+
+/* Placeholder */
+.history-search input::placeholder {
+    color: #666b70 !important;
+    opacity: 1 !important;
+}
+
+/* Focus */
+.history-search input:focus {
+    border-color: #b87800 !important;
+
+    box-shadow:
+        0 0 0 1px rgba(184, 120, 0, 0.25) !important;
+}
+
+/* =========================================================
+   SEARCH CLEAR BUTTON
+   ========================================================= */
+
+.history-search-clear {
+    position: absolute !important;
+
+    right: 8px !important;
+    top: 50% !important;
+
+    transform: translateY(-50%) !important;
+
+    width: 24px !important;
+    height: 24px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: none !important;
+    background: transparent !important;
+
+    color: #85898d !important;
+
+    cursor: pointer !important;
+}
+
+.history-search-clear:hover {
+    color: #ffffff !important;
+}
+
+.history-search-clear.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   CLEAR HISTORY
+   ========================================================= */
+
+.history-actions .history-clear-button {
+    align-self: center !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .history-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+
+    .history-search {
+        width: 320px !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .history-actions {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    .history-search {
+        width: 100% !important;
+        max-width: 360px !important;
     }
 }
