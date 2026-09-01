@@ -1,0 +1,4 @@
+fastapi
+uvicorn[standard]
+pydantic
+foundry-local-sdk-winml

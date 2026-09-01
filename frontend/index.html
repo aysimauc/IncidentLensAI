@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="IncidentLens — Technical Incident Intelligence"
+    >
+
+    <title>IncidentLens — Technical Incident Intelligence</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         APPLICATION SHELL
+         ===================================================== -->
+
+    <div class="app-shell">
+
+
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+        <aside class="sidebar">
+
+            <!-- Brand -->
+
+            <div class="brand">
+
+                <div class="brand-mark">
+                    IL
+                </div>
+
+                <div class="brand-copy">
+
+                    <span class="brand-name">
+                        IncidentLens AI
+                    </span>
+
+                    <span class="brand-version">
+                        v1.0
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Navigation -->
+
+            <nav class="navigation">
+
+                <div class="nav-label">
+                    WORKSPACE
+                </div>
+
+
+                <a
+                    href="#"
+                    class="nav-item active"
+                >
+
+                    <span class="nav-symbol">
+                        ◈
+                    </span>
+
+                    <span>
+                        Analyzer
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="nav-item"
+                    id="historyNav"
+                >
+
+                    <span class="nav-symbol">
+                        ≡
+                    </span>
+
+                    <span>
+                        AI Incidents
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="#"
+                    class="nav-item"
+                    id="statusNav"
+                >
+
+                    <span class="nav-symbol">
+                        ◉
+                    </span>
+
+                    <span>
+                        System Status
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <!-- Runtime -->
+
+            <div class="sidebar-runtime">
+
+                <div class="runtime-label">
+                    LOCAL RUNTIME
+                </div>
+
+
+                <div class="runtime-card">
+
+                    <div class="runtime-header">
+
+                        <span class="runtime-indicator"></span>
+
+                        <span>
+                            ONLINE
+                        </span>
+
+                    </div>
+
+
+                    <div class="runtime-model">
+                        Qwen 3.5 · 4B
+                    </div>
+
+
+                    <div class="runtime-engine">
+                        Foundry Local
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Sidebar footer -->
+
+            <div class="sidebar-footer">
+
+                <span>
+                    LOCAL AI
+                </span>
+
+                <span class="footer-dot">
+                    •
+                </span>
+
+                <span>
+                    PRIVATE RUNTIME
+                </span>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             MAIN AREA
+             ================================================= -->
+
+        <main class="main-content">
+
+
+            <!-- =================================================
+                 TOP HEADER
+                 ================================================= -->
+
+            <header class="top-header">
+
+                <div class="breadcrumb">
+
+                    <span>
+                        INCIDENTLENS
+                    </span>
+
+                    <span class="breadcrumb-separator">
+                        /
+                    </span>
+
+                    <span class="breadcrumb-current">
+                        ANALYZER
+                    </span>
+
+                </div>
+
+
+                <div class="system-status">
+
+                    <span class="system-status-dot"></span>
+
+                    <span>
+                        LOCAL SYSTEM ONLINE
+                    </span>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 PAGE CONTENT
+                 ================================================= -->
+
+            <div class="content-wrapper">
+
+
+                <!-- Hero -->
+
+                <section class="hero">
+
+                    <div class="hero-eyebrow">
+                        TECHNICAL INCIDENT INTELLIGENCE
+                    </div>
+
+
+                    <h1 class="incident-hero-title">
+    Understand the incident.
+    <br>
+    <span>Act on the signal.</span>
+</h1>
+
+
+                    <p class="hero-description">
+                        Transform raw production incident descriptions
+                        into structured severity assessment, probable
+                        root causes and actionable first-response steps.
+                    </p>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     INCIDENT INPUT
+                     ================================================= -->
+
+                <section class="incident-workspace">
+
+
+                    <div class="workspace-header">
+
+                        <div>
+
+                            <div class="workspace-label">
+                                NEW INCIDENT
+                            </div>
+
+                            <h2>
+                                Incident Description
+                            </h2>
+
+                        </div>
+
+
+                        <div class="workspace-meta">
+
+                            <span class="meta-indicator"></span>
+
+                            <span>
+                                READY FOR ANALYSIS
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="input-container">
+
+                        <textarea
+                            id="incidentInput"
+                            class="incident-input"
+                            placeholder="Describe what happened...
+
+Example:
+Production payment API has experienced an increase in HTTP 500 errors over the last 20 minutes. Database connections are intermittently dropping and some users are unable to complete payments.
+
+Include symptoms, affected services, timing and user impact when available."
+                            spellcheck="true"
+                        ></textarea>
+
+
+                        <div class="input-overlay-label">
+                            INCIDENT DATA
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="input-toolbar">
+
+
+                        <div class="input-stats">
+
+                            <span
+                                id="characterCount"
+                            >
+                                0
+                            </span>
+
+                            <span>
+                                characters
+                            </span>
+
+                        </div>
+
+
+                        <div class="input-actions">
+
+                            <button
+                                type="button"
+                                class="clear-button"
+                                id="clearButton"
+                            >
+                                Clear
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="analyze-button"
+                                id="analyzeButton"
+                            >
+
+                                <span class="analyze-symbol">
+                                    →
+                                </span>
+
+                                <span>
+                                    Analyze Incident
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     PROCESSING STATE
+                     ================================================= -->
+
+                <section
+                    id="loadingState"
+                    class="processing-panel hidden"
+                >
+
+                    <div class="processing-indicator">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+
+                    <div class="processing-copy">
+
+                        <div class="processing-title">
+                            Analyzing incident
+                        </div>
+
+                        <div class="processing-description">
+                            Local model is processing the incident data.
+                        </div>
+
+                    </div>
+
+
+                    <div class="processing-model">
+                        QWEN 3.5 · 4B
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     ERROR
+                     ================================================= -->
+
+                <section
+                    id="errorState"
+                    class="error-panel hidden"
+                >
+
+                    <div class="error-mark">
+                        !
+                    </div>
+
+
+                    <div class="error-copy">
+
+                        <div class="error-title">
+                            Analysis failed
+                        </div>
+
+                        <div
+                            id="errorMessage"
+                            class="error-message"
+                        >
+                            An unexpected error occurred.
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     RESULTS
+                     ================================================= -->
+
+                <section
+                    id="resultsSection"
+                    class="results-section hidden"
+                >
+
+
+                    <!-- Results header -->
+
+                    <div class="results-header">
+
+
+                        <div>
+
+                            <div class="results-eyebrow">
+                                INCIDENT REPORT
+                            </div>
+
+                            <h2>
+                                Analysis Result
+                            </h2>
+
+                        </div>
+
+
+                        <div class="analysis-complete">
+
+                            <span class="complete-dot"></span>
+
+                            ANALYSIS COMPLETE
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SEVERITY
+                         ================================================= -->
+
+                    <article
+                        class="severity-panel"
+                    >
+
+                        <div class="severity-left">
+
+                            <div class="result-eyebrow">
+                                SEVERITY ASSESSMENT
+                            </div>
+
+
+                            <div class="severity-value-wrapper">
+
+                                <div
+                                    id="severityResult"
+                                    class="severity-value"
+                                >
+                                    —
+                                </div>
+
+                            </div>
+
+
+                            <div class="severity-description">
+                                Estimated impact level based on
+                                the incident description.
+                            </div>
+
+                        </div>
+
+
+                        <div class="severity-marker">
+
+                            <div class="marker-label">
+                                INCIDENT
+                            </div>
+
+                            <div class="marker-line"></div>
+
+                            <div class="marker-label">
+                                IMPACT
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================================
+                         ANALYSIS GRID
+                         ================================================= -->
+
+                    <div class="analysis-grid">
+
+
+                        <!-- Symptoms -->
+
+                        <article class="analysis-card">
+
+                            <div class="card-header">
+
+                                <div class="card-index">
+                                    01
+                                </div>
+
+                                <div>
+
+                                    <div class="card-eyebrow">
+                                        OBSERVED
+                                    </div>
+
+                                    <h3>
+                                        Symptoms
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                id="symptomsResult"
+                                class="card-content"
+                            >
+                                —
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- Root Causes -->
+
+                        <article class="analysis-card">
+
+                            <div class="card-header">
+
+                                <div class="card-index">
+                                    02
+                                </div>
+
+                                <div>
+
+                                    <div class="card-eyebrow">
+                                        PROBABLE
+                                    </div>
+
+                                    <h3>
+                                        Root Causes
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                id="rootCausesResult"
+                                class="card-content"
+                            >
+                                —
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- Response -->
+
+                        <article class="analysis-card response-card">
+
+                            <div class="card-header">
+
+                                <div class="card-index">
+                                    03
+                                </div>
+
+                                <div>
+
+                                    <div class="card-eyebrow">
+                                        RECOMMENDED
+                                    </div>
+
+                                    <h3>
+                                        First Response
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                id="actionsResult"
+                                class="card-content"
+                            >
+                                —
+                            </div>
+
+                        </article>
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SUMMARY
+                         ================================================= -->
+
+                    <article class="summary-panel">
+
+
+                        <div class="summary-header">
+
+                            <div class="card-index">
+                                04
+                            </div>
+
+
+                            <div>
+
+                                <div class="card-eyebrow">
+                                    EXECUTIVE SIGNAL
+                                </div>
+
+                                <h3>
+                                    Incident Summary
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="summaryResult"
+                            class="summary-content"
+                        >
+                            —
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================================
+                         RUNTIME INFORMATION
+                         ================================================= -->
+
+                    <div class="runtime-footer">
+
+                        <div class="runtime-footer-item">
+
+                            <span class="runtime-footer-label">
+                                MODEL
+                            </span>
+
+                            <span class="runtime-footer-value">
+                                Qwen 3.5 · 4B
+                            </span>
+
+                        </div>
+
+
+                        <div class="runtime-footer-divider"></div>
+
+
+                        <div class="runtime-footer-item">
+
+                            <span class="runtime-footer-label">
+                                RUNTIME
+                            </span>
+
+                            <span class="runtime-footer-value">
+                                Foundry Local
+                            </span>
+
+                        </div>
+
+
+                        <div class="runtime-footer-divider"></div>
+
+
+                        <div class="runtime-footer-item">
+
+                            <span class="runtime-footer-label">
+                                EXECUTION
+                            </span>
+
+                            <span class="runtime-footer-value">
+                                LOCAL
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     FOOTER
+                     ================================================= -->
+
+                <footer class="main-footer">
+
+                    <div>
+                        IncidentLens AI
+                    </div>
+
+
+                    <div class="main-footer-center">
+                        Technical Incident Intelligence
+                    </div>
+
+
+                    <div>
+                        LOCAL RUNTIME
+                    </div>
+
+                </footer>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="app.js"></script>
+
+</body>
+</html>
