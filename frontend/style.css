@@ -159,8 +159,8 @@ a {
 
 .brand-mark {
 
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
 
     display: flex;
 
@@ -187,17 +187,17 @@ a {
 
     flex-direction: column;
 
-    gap: 2px;
+    gap: 3px;
 }
 
 
 .brand-name {
 
-    font-size: 15px;
+    font-size: 17px;
 
     font-weight: 700;
 
-    letter-spacing: -0.2px;
+    letter-spacing: -0.25px;
 }
 
 
@@ -552,9 +552,9 @@ a {
 
 .hero {
 
-    max-width: 760px;
+    max-width: 720px;
 
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 }
 
 
@@ -578,13 +578,17 @@ a {
 
     color: var(--text);
 
-    font-size: clamp(38px, 5vw, 64px);
+    font-size: 28px;
 
-    line-height: 1.02;
+    line-height: 1.2;
 
     font-weight: 600;
 
-    letter-spacing: -3px;
+    letter-spacing: -0.02em;
+
+    max-width: 650px;
+
+    margin-bottom: 16px;
 }
 
 
@@ -596,15 +600,15 @@ a {
 
 .hero-description {
 
-    max-width: 630px;
+    max-width: 580px;
 
-    margin-top: 23px;
+    margin-top: 12px;
 
     color: var(--text-muted);
 
-    font-size: 15px;
+    font-size: 12px;
 
-    line-height: 1.75;
+    line-height: 1.65;
 }
 
 
@@ -613,6 +617,8 @@ a {
    ========================================================= */
 
 .incident-workspace {
+
+    margin-top: 8px;
 
     overflow: hidden;
 
@@ -1592,6 +1598,13 @@ a {
 }
 
 
+@media (max-width: 900px) {
+
+    .hero h1 {
+        font-size: 38px;
+    }
+}
+
 @media (max-width: 720px) {
 
     .sidebar {
@@ -1675,119 +1688,6 @@ a {
 
         gap: 10px;
     }
-}
-
-/* =========================================================
-   HERO TITLE - FINAL
-   ========================================================= */
-
-/*
-   Tek bir hero başlığı kuralı kullanıyoruz.
-   Önceki 58px / 42-58px gibi çakışan !important kuralları kaldırıldı.
-*/
-
-.hero h1 {
-    font-size: 44px !important;
-    line-height: 1.12 !important;
-    letter-spacing: -0.035em !important;
-    max-width: 800px !important;
-    margin-bottom: 28px !important;
-}
-
-.hero h1 span {
-    font-size: inherit !important;
-    line-height: inherit !important;
-}
-
-@media (max-width: 900px) {
-    .hero h1 {
-        font-size: 38px !important;
-    }
-}
-
-@media (max-width: 600px) {
-    .hero h1 {
-        font-size: 32px !important;
-    }
-}
-/* =========================================================
-   FINAL VISUAL HIERARCHY
-   Brand first - workspace second - hero third
-   ========================================================= */
-
-.hero {
-    max-width: 720px !important;
-    margin-bottom: 40px !important;
-}
-
-.hero h1 {
-    font-size: 34px !important;
-    line-height: 1.15 !important;
-    letter-spacing: -0.025em !important;
-    max-width: 700px !important;
-    margin-bottom: 20px !important;
-}
-
-.hero h1 span {
-    font-size: inherit !important;
-    line-height: inherit !important;
-}
-
-.hero-description {
-    max-width: 600px !important;
-    margin-top: 16px !important;
-    font-size: 13px !important;
-    line-height: 1.7 !important;
-}
-
-/* Brand should be the first visual anchor */
-.brand-name {
-    font-size: 17px !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.25px !important;
-}
-
-.brand-mark {
-    width: 38px !important;
-    height: 38px !important;
-    font-size: 12px !important;
-}
-
-/* Give the application identity slightly more presence */
-.brand-copy {
-    gap: 3px !important;
-}
-
-/* Keep navigation calm */
-.nav-item {
-    font-size: 13px !important;
-}
-
-/* Make the workspace the main working area */
-.incident-workspace {
-    margin-top: 8px !important;
-}
-/* =========================================================
-   FINAL HERO SCALE
-   ========================================================= */
-
-.hero h1 {
-    font-size: 28px !important;
-    line-height: 1.2 !important;
-    letter-spacing: -0.02em !important;
-    max-width: 650px !important;
-    margin-bottom: 16px !important;
-}
-
-.hero h1 span {
-    font-size: inherit !important;
-}
-
-.hero-description {
-    max-width: 580px !important;
-    font-size: 12px !important;
-    line-height: 1.65 !important;
-    margin-top: 12px !important;
 }
 
 /* =========================================================
