@@ -6,13 +6,16 @@
 const API_URL = "http://127.0.0.1:8000";
 const HISTORY_KEY = "incidentlens_incidents";
 
-let incidentInput;
-let analyzeButton;
-let loadingState;
-let errorState;
-let errorMessage;
-let resultsSection;
-let characterCount;
+let incidentInput = null;
+let analyzeButton = null;
+let loadingState = null;
+let errorState = null;
+let errorMessage = null;
+let resultsSection = null;
+let characterCount = null;
+
+let historySearchTerm = "";
+
 
 // ============================================================
 // INITIALIZATION
@@ -24,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCharacterCount();
     checkBackend();
 });
+
 
 // ============================================================
 // ELEMENTS
@@ -53,12 +57,14 @@ function initializeElements() {
         document.querySelector("#characterCount");
 }
 
+
 // ============================================================
 // EVENTS
 // ============================================================
 
 function initializeEvents() {
 
+    // Incident input
     if (incidentInput) {
 
         incidentInput.addEventListener(
@@ -74,15 +80,16 @@ function initializeEvents() {
                     event.ctrlKey &&
                     event.key === "Enter"
                 ) {
-
                     event.preventDefault();
-
                     analyzeIncident();
                 }
+
             }
         );
     }
 
+
+    // Analyze button
     if (analyzeButton) {
 
         analyzeButton.addEventListener(
@@ -91,6 +98,8 @@ function initializeEvents() {
         );
     }
 
+
+    // Clear button
     const clearButton =
         document.querySelector("#clearButton");
 
@@ -102,6 +111,8 @@ function initializeEvents() {
         );
     }
 
+
+    // AI Incidents navigation
     const historyNav =
         document.querySelector("#historyNav");
 
@@ -118,6 +129,8 @@ function initializeEvents() {
         );
     }
 
+
+    // System Status navigation
     const statusNav =
         document.querySelector("#statusNav");
 
@@ -134,6 +147,8 @@ function initializeEvents() {
         );
     }
 
+
+    // Analyzer navigation
     const analyzerNav =
         document.querySelector(
             ".nav-item:not(#historyNav):not(#statusNav)"
@@ -153,19 +168,24 @@ function initializeEvents() {
     }
 }
 
+
 // ============================================================
 // CHARACTER COUNT
 // ============================================================
 
 function updateCharacterCount() {
 
-    if (!incidentInput || !characterCount) {
+    if (
+        !incidentInput ||
+        !characterCount
+    ) {
         return;
     }
 
     characterCount.textContent =
         incidentInput.value.length;
 }
+
 
 // ============================================================
 // BACKEND HEALTH
@@ -209,6 +229,7 @@ async function checkBackend() {
     }
 }
 
+
 // ============================================================
 // SYSTEM STATUS INDICATOR
 // ============================================================
@@ -217,45 +238,138 @@ function updateSystemStatus(
     isOnline,
     modelLoaded
 ) {
+    // ========================================================
+    // TOP HEADER STATUS
+    // ========================================================
 
     const status =
         document.querySelector(
             ".system-status"
         );
 
-    if (!status) {
+    if (status) {
+
+        const dot =
+            status.querySelector(
+                ".system-status-dot"
+            );
+
+        if (dot) {
+            dot.style.background =
+                isOnline
+                    ? "var(--green)"
+                    : "var(--red)";
+        }
+
+        const textNode =
+            [...status.childNodes]
+                .find(
+                    node =>
+                        node.nodeType === Node.TEXT_NODE &&
+                        node.textContent.trim()
+                );
+
+        if (textNode) {
+            textNode.textContent =
+                isOnline
+                    ? modelLoaded
+                        ? " LOCAL SYSTEM ONLINE"
+                        : " LOCAL SYSTEM READY"
+                    : " LOCAL SYSTEM OFFLINE";
+        }
+    }
+
+
+    // ========================================================
+    // SIDEBAR LOCAL RUNTIME
+    // ========================================================
+
+    const runtimeCard =
+        document.querySelector(
+            ".runtime-card"
+        );
+
+    if (!runtimeCard) {
         return;
     }
 
-    const dot =
-        status.querySelector(
-            ".system-status-dot"
+    const runtimeIndicator =
+        runtimeCard.querySelector(
+            ".runtime-indicator"
         );
 
-    if (dot) {
+    const runtimeHeaderText =
+        runtimeCard.querySelector(
+            ".runtime-header span:last-child"
+        );
 
-        dot.style.background =
-            isOnline
-                ? "var(--green)"
-                : "var(--red)";
+    const runtimeModel =
+        runtimeCard.querySelector(
+            ".runtime-model"
+        );
+
+    const runtimeEngine =
+        runtimeCard.querySelector(
+            ".runtime-engine"
+        );
+
+
+    // --------------------------------------------------------
+    // ONLINE
+    // --------------------------------------------------------
+
+    if (isOnline) {
+
+        if (runtimeIndicator) {
+            runtimeIndicator.style.background =
+                "var(--green)";
+        }
+
+        if (runtimeHeaderText) {
+            runtimeHeaderText.textContent =
+                modelLoaded
+                    ? "ONLINE"
+                    : "READY";
+        }
+
+        if (runtimeModel) {
+            runtimeModel.textContent =
+                modelLoaded
+                    ? "Qwen 3.5 · 4B"
+                    : "Qwen 3.5 · 4B";
+        }
+
+        if (runtimeEngine) {
+            runtimeEngine.textContent =
+                "Foundry Local";
+        }
+
+        return;
     }
 
-    const textNode =
-        [...status.childNodes]
-            .find(
-                node =>
-                    node.nodeType === Node.TEXT_NODE &&
-                    node.textContent.trim()
-            );
 
-    if (textNode) {
+    // --------------------------------------------------------
+    // OFFLINE
+    // --------------------------------------------------------
 
-        textNode.textContent =
-            isOnline
-                ? modelLoaded
-                    ? " LOCAL SYSTEM ONLINE"
-                    : " LOCAL SYSTEM READY"
-                : " LOCAL SYSTEM OFFLINE";
+    if (runtimeIndicator) {
+        runtimeIndicator.style.background =
+            "var(--red)";
+    }
+
+    if (runtimeHeaderText) {
+        runtimeHeaderText.textContent =
+            "OFFLINE";
+    }
+
+    if (runtimeModel) {
+        runtimeModel.textContent =
+            "Backend unavailable";
+    }
+
+    if (runtimeEngine) {
+        runtimeEngine.textContent =
+            "Local runtime disconnected";
     }
 }
 
@@ -385,6 +499,7 @@ async function analyzeIncident() {
     }
 }
 
+
 // ============================================================
 // DISPLAY RESULT
 // ============================================================
@@ -397,6 +512,7 @@ function displayResult(result) {
 
     const parsed =
         parseIncidentReport(result);
+
 
     const severityElement =
         document.querySelector(
@@ -423,16 +539,19 @@ function displayResult(result) {
             "#summaryResult"
         );
 
+
     if (severityElement) {
 
         severityElement.textContent =
-            parsed.severity || "Unknown";
+            parsed.severity ||
+            "Unknown";
 
         severityElement.className =
             `severity-value ${normalizeSeverity(
                 parsed.severity
             )}`;
     }
+
 
     if (symptomsElement) {
 
@@ -441,6 +560,7 @@ function displayResult(result) {
                 parsed.symptoms
             );
     }
+
 
     if (rootCausesElement) {
 
@@ -451,6 +571,7 @@ function displayResult(result) {
             );
     }
 
+
     if (actionsElement) {
 
         actionsElement.innerHTML =
@@ -459,15 +580,19 @@ function displayResult(result) {
             );
     }
 
+
     if (summaryElement) {
 
         summaryElement.textContent =
-            parsed.summary || "—";
+            parsed.summary ||
+            "—";
     }
+
 
     resultsSection.classList.remove(
         "hidden"
     );
+
 
     setTimeout(() => {
 
@@ -479,6 +604,7 @@ function displayResult(result) {
     }, 100);
 }
 
+
 // ============================================================
 // PARSE AI REPORT
 // ============================================================
@@ -486,7 +612,7 @@ function displayResult(result) {
 function parseIncidentReport(text) {
 
     const clean =
-        text
+        String(text || "")
             .replace(
                 /<think>[\s\S]*?<\/think>/gi,
                 ""
@@ -497,11 +623,14 @@ function parseIncidentReport(text) {
             )
             .trim();
 
+
     const sectionRegex =
         /^\s*(1\.|2\.|3\.|4\.|5\.)\s*(Severity|Observed Symptoms|Possible Root Causes|Initial Response Recommendations|Short Incident Summary)\s*:?\s*$/gim;
 
+
     const matches =
         [...clean.matchAll(sectionRegex)];
+
 
     const sections = {
 
@@ -516,6 +645,7 @@ function parseIncidentReport(text) {
         summary: ""
     };
 
+
     if (!matches.length) {
 
         sections.summary =
@@ -523,6 +653,7 @@ function parseIncidentReport(text) {
 
         return sections;
     }
+
 
     for (
         let i = 0;
@@ -549,6 +680,7 @@ function parseIncidentReport(text) {
             clean
                 .slice(start, end)
                 .trim();
+
 
         if (
             title === "severity"
@@ -599,8 +731,10 @@ function parseIncidentReport(text) {
         }
     }
 
+
     return sections;
 }
+
 
 // ============================================================
 // EXTRACT SEVERITY
@@ -614,9 +748,11 @@ function extractSeverity(text) {
             .map(cleanInline)
             .filter(Boolean);
 
+
     if (!lines.length) {
         return "";
     }
+
 
     const severityLine =
         lines.find(
@@ -625,11 +761,13 @@ function extractSeverity(text) {
                     .test(line)
         );
 
+
     return (
         severityLine ||
         lines[0]
     );
 }
+
 
 // ============================================================
 // EXTRACT BULLETS
@@ -656,13 +794,14 @@ function extractBullets(text) {
         .filter(Boolean);
 }
 
+
 // ============================================================
 // CLEAN INLINE TEXT
 // ============================================================
 
 function cleanInline(text) {
 
-    return text
+    return String(text || "")
         .replace(
             /\*\*/g,
             ""
@@ -677,6 +816,7 @@ function cleanInline(text) {
         )
         .trim();
 }
+
 
 // ============================================================
 // FORMAT LIST
@@ -698,6 +838,7 @@ function formatList(
             </div>
         `;
     }
+
 
     return `
         <ul>
@@ -726,6 +867,7 @@ function formatList(
     `;
 }
 
+
 // ============================================================
 // LOADING
 // ============================================================
@@ -742,14 +884,17 @@ function setLoading(
         );
     }
 
+
     if (!analyzeButton) {
         return;
     }
+
 
     const buttonText =
         analyzeButton.querySelector(
             "span:last-child"
         );
+
 
     if (isLoading) {
 
@@ -783,6 +928,7 @@ function setLoading(
     }
 }
 
+
 // ============================================================
 // ERROR
 // ============================================================
@@ -806,6 +952,7 @@ function showError(
     );
 }
 
+
 function clearError() {
 
     if (!errorState) {
@@ -816,6 +963,7 @@ function clearError() {
         "hidden"
     );
 }
+
 
 // ============================================================
 // CLEAR ANALYZER
@@ -830,6 +978,7 @@ function clearIncident() {
         incidentInput.focus();
     }
 
+
     if (resultsSection) {
 
         resultsSection.classList.add(
@@ -837,9 +986,12 @@ function clearIncident() {
         );
     }
 
+
     clearError();
+
     updateCharacterCount();
 }
+
 
 // ============================================================
 // INCIDENT HISTORY
@@ -861,6 +1013,7 @@ function getHistory() {
     }
 }
 
+
 function saveIncident(
     incidentText,
     analysis
@@ -873,6 +1026,7 @@ function saveIncident(
 
     const incidents =
         getHistory();
+
 
     const incident = {
 
@@ -895,17 +1049,23 @@ function saveIncident(
             new Date().toISOString()
     };
 
+
     incidents.unshift(
         incident
     );
 
+
     localStorage.setItem(
         HISTORY_KEY,
         JSON.stringify(
-            incidents.slice(0, 50)
+            incidents.slice(
+                0,
+                50
+            )
         )
     );
 }
+
 
 // ============================================================
 // VIEW MANAGEMENT
@@ -938,15 +1098,18 @@ function showView(
         )
     ];
 
+
     const footer =
         document.querySelector(
             ".main-footer"
         );
 
+
     let dynamicView =
         document.querySelector(
             "#dynamicView"
         );
+
 
     if (!dynamicView) {
 
@@ -961,10 +1124,12 @@ function showView(
         dynamicView.className =
             "view-panel";
 
+
         const wrapper =
             document.querySelector(
                 ".content-wrapper"
             );
+
 
         if (wrapper) {
 
@@ -973,6 +1138,7 @@ function showView(
             );
         }
     }
+
 
     analyzerSections.forEach(
         section => {
@@ -987,6 +1153,7 @@ function showView(
         }
     );
 
+
     if (footer) {
 
         footer.classList.toggle(
@@ -994,6 +1161,7 @@ function showView(
             view !== "analyzer"
         );
     }
+
 
     document
         .querySelectorAll(
@@ -1006,6 +1174,7 @@ function showView(
                 )
         );
 
+
     if (view === "analyzer") {
 
         document
@@ -1016,12 +1185,17 @@ function showView(
                 "active"
             );
 
+
         dynamicView.innerHTML =
+            "";
+
+        historySearchTerm =
             "";
 
         dynamicView.classList.add(
             "hidden"
         );
+
 
         updateBreadcrumb(
             "ANALYZER"
@@ -1030,9 +1204,11 @@ function showView(
         return;
     }
 
+
     dynamicView.classList.remove(
         "hidden"
     );
+
 
     if (view === "history") {
 
@@ -1044,12 +1220,17 @@ function showView(
                 "active"
             );
 
+
         updateBreadcrumb(
             "AI INCIDENTS"
         );
 
+
         renderHistory();
+
+        return;
     }
+
 
     if (view === "status") {
 
@@ -1061,13 +1242,16 @@ function showView(
                 "active"
             );
 
+
         updateBreadcrumb(
             "SYSTEM STATUS"
         );
 
+
         renderSystemStatus();
     }
 }
+
 
 // ============================================================
 // BREADCRUMB
@@ -1082,6 +1266,7 @@ function updateBreadcrumb(
             ".breadcrumb-current"
         );
 
+
     if (element) {
 
         element.textContent =
@@ -1089,8 +1274,10 @@ function updateBreadcrumb(
     }
 }
 
+
 // ============================================================
 // AI INCIDENTS
+// SEARCH + HISTORY
 // ============================================================
 
 function renderHistory() {
@@ -1100,12 +1287,56 @@ function renderHistory() {
             "#dynamicView"
         );
 
+
     if (!dynamicView) {
         return;
     }
 
+
     const incidents =
         getHistory();
+
+
+    const normalizedSearch =
+        historySearchTerm
+            .trim()
+            .toLowerCase();
+
+
+    const filteredIncidents =
+        normalizedSearch
+            ? incidents.filter(
+                incident => {
+
+                    const searchableText = [
+
+                        incident.id,
+
+                        incident.text,
+
+                        incident.severity,
+
+                        incident.createdAt,
+
+                        incident.analysis
+
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
+
+
+                    return searchableText.includes(
+                        normalizedSearch
+                    );
+                }
+            )
+            : incidents;
+
+
+    // ========================================================
+    // HISTORY PAGE
+    // ========================================================
 
     dynamicView.innerHTML = `
 
@@ -1127,32 +1358,202 @@ function renderHistory() {
 
             </div>
 
+
+            <!-- ==================================================
+                 SEARCH AREA
+                 ================================================== -->
+
+            <div class="history-actions">
+
+                <label
+                    class="history-search"
+                    for="historySearchInput"
+                >
+
+                    <span
+                        class="history-search-icon"
+                        aria-hidden="true"
+                    >
+                        ⌕
+                    </span>
+
+
+                    <span class="sr-only">
+                        Search incidents
+                    </span>
+
+
+                    <input
+                        id="historySearchInput"
+                        type="search"
+                        autocomplete="off"
+                        placeholder="Search incidents..."
+                        value="${escapeHTML(
+                            historySearchTerm
+                        )}"
+                        aria-label="Search incidents"
+                    >
+
+
+                    <button
+                        class="history-search-clear hidden"
+                        id="clearHistorySearchButton"
+                        type="button"
+                        aria-label="Clear incident search"
+                    >
+                        ×
+                    </button>
+
+                </label>
+
+
+                ${
+                    incidents.length
+                        ? `
+                            <button
+                                class="history-clear-button"
+                                id="clearHistoryButton"
+                                type="button"
+                            >
+                                CLEAR HISTORY
+                            </button>
+                        `
+                        : ""
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             RESULT COUNT
+             ================================================== -->
+
+        <div class="history-results-meta">
+
             ${
-                incidents.length
-                    ? `
-                        <button
-                            class="history-clear-button"
-                            id="clearHistoryButton"
-                            type="button"
-                        >
-                            CLEAR HISTORY
-                        </button>
-                    `
-                    : ""
+                normalizedSearch
+
+                    ? `${filteredIncidents.length} of ${incidents.length} incidents`
+
+                    : `${incidents.length} ${
+                        incidents.length === 1
+                            ? "incident"
+                            : "incidents"
+                    }`
             }
 
         </div>
+
+
+        <!-- ==================================================
+             INCIDENT LIST
+             ================================================== -->
 
         <div
             class="incident-list"
             id="incidentList"
         ></div>
+
     `;
+
 
     const list =
         dynamicView.querySelector(
             "#incidentList"
         );
+
+
+    const searchInput =
+        dynamicView.querySelector(
+            "#historySearchInput"
+        );
+
+
+    const searchClearButton =
+        dynamicView.querySelector(
+            "#clearHistorySearchButton"
+        );
+
+
+    // ========================================================
+    // SEARCH INPUT
+    // ========================================================
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            (event) => {
+
+                historySearchTerm =
+                    event.target.value;
+
+
+                renderHistory();
+
+
+                const refreshedInput =
+                    document.querySelector(
+                        "#historySearchInput"
+                    );
+
+
+                if (refreshedInput) {
+
+                    refreshedInput.focus();
+
+
+                    const cursorPosition =
+                        refreshedInput.value.length;
+
+
+                    refreshedInput.setSelectionRange(
+                        cursorPosition,
+                        cursorPosition
+                    );
+                }
+            }
+        );
+    }
+
+
+    // ========================================================
+    // SEARCH CLEAR BUTTON
+    // ========================================================
+
+    if (searchClearButton) {
+
+        searchClearButton.classList.toggle(
+            "hidden",
+            !normalizedSearch
+        );
+
+
+        searchClearButton.addEventListener(
+            "click",
+            () => {
+
+                historySearchTerm =
+                    "";
+
+                renderHistory();
+
+
+                document
+                    .querySelector(
+                        "#historySearchInput"
+                    )
+                    ?.focus();
+            }
+        );
+    }
+
+
+    // ========================================================
+    // NO INCIDENTS
+    // ========================================================
 
     if (!incidents.length) {
 
@@ -1174,13 +1575,50 @@ function renderHistory() {
                 </div>
 
             </div>
+
         `;
 
         return;
     }
 
+
+    // ========================================================
+    // NO SEARCH MATCH
+    // ========================================================
+
+    if (!filteredIncidents.length) {
+
+        list.innerHTML = `
+
+            <div class="incident-list-empty">
+
+                <div class="incident-list-empty-icon">
+                    ⌕
+                </div>
+
+                <div class="incident-list-empty-title">
+                    No matching incidents
+                </div>
+
+                <div class="incident-list-empty-text">
+                    Try searching by incident ID,
+                    description, severity, or analysis content.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    // ========================================================
+    // INCIDENT ROWS
+    // ========================================================
+
     list.innerHTML =
-        incidents
+        filteredIncidents
             .map(
                 incident => {
 
@@ -1188,6 +1626,7 @@ function renderHistory() {
                         normalizeSeverity(
                             incident.severity
                         );
+
 
                     return `
 
@@ -1200,14 +1639,18 @@ function renderHistory() {
                         >
 
                             <div class="incident-id">
+
                                 ${escapeHTML(
                                     incident.id
                                 )}
+
                             </div>
+
 
                             <div class="incident-preview">
 
                                 <div class="incident-preview-title">
+
                                     ${escapeHTML(
                                         incident.text
                                             .slice(
@@ -1215,7 +1658,9 @@ function renderHistory() {
                                                 110
                                             )
                                     )}
+
                                 </div>
+
 
                                 <div class="incident-preview-meta">
                                     LOCAL ANALYSIS
@@ -1223,30 +1668,44 @@ function renderHistory() {
 
                             </div>
 
+
                             <div
                                 class="incident-severity ${severityClass}"
                             >
+
                                 ${escapeHTML(
-                                    incident.severity
-                                        .toUpperCase()
+                                    String(
+                                        incident.severity
+                                    ).toUpperCase()
                                 )}
+
                             </div>
 
+
                             <div class="incident-time">
+
                                 ${formatDate(
                                     incident.createdAt
                                 )}
+
                             </div>
+
 
                             <div class="incident-open">
                                 →
                             </div>
 
                         </button>
+
                     `;
                 }
             )
             .join("");
+
+
+    // ========================================================
+    // OPEN INCIDENT DETAIL
+    // ========================================================
 
     list
         .querySelectorAll(
@@ -1260,18 +1719,23 @@ function renderHistory() {
                     () => {
 
                         showIncidentDetail(
-                            row.dataset
-                                .incidentId
+                            row.dataset.incidentId
                         );
                     }
                 );
             }
         );
 
+
+    // ========================================================
+    // CLEAR ALL HISTORY
+    // ========================================================
+
     const clearButton =
         dynamicView.querySelector(
             "#clearHistoryButton"
         );
+
 
     if (clearButton) {
 
@@ -1279,15 +1743,32 @@ function renderHistory() {
             "click",
             () => {
 
+                const confirmed =
+                    window.confirm(
+                        "Clear all saved incident history?"
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
                 localStorage.removeItem(
                     HISTORY_KEY
                 );
+
+
+                historySearchTerm =
+                    "";
+
 
                 renderHistory();
             }
         );
     }
 }
+
 
 // ============================================================
 // INCIDENT DETAIL
@@ -1304,27 +1785,33 @@ function showIncidentDetail(
                     item.id === id
             );
 
+
     if (!incident) {
         return;
     }
+
 
     const dynamicView =
         document.querySelector(
             "#dynamicView"
         );
 
+
     if (!dynamicView) {
         return;
     }
+
 
     const parsed =
         parseIncidentReport(
             incident.analysis
         );
 
+
     dynamicView.innerHTML = `
 
         <div class="incident-detail">
+
 
             <button
                 class="incident-detail-back"
@@ -1334,21 +1821,29 @@ function showIncidentDetail(
                 ← BACK TO AI INCIDENTS
             </button>
 
+
             <div class="view-panel-eyebrow">
                 INCIDENT REPORT
             </div>
 
+
             <h1 class="incident-detail-title">
+
                 ${escapeHTML(
                     incident.id
                 )}
+
             </h1>
 
+
             <div class="incident-detail-time">
+
                 ${formatDate(
                     incident.createdAt
                 )}
+
             </div>
+
 
             <div class="incident-detail-report">
 
@@ -1358,8 +1853,11 @@ function showIncidentDetail(
 
             </div>
 
+
         </div>
+
     `;
+
 
     dynamicView
         .querySelector(
@@ -1370,6 +1868,7 @@ function showIncidentDetail(
             renderHistory
         );
 }
+
 
 // ============================================================
 // HISTORY REPORT
@@ -1389,14 +1888,20 @@ function formatReportForHistory(
                     SEVERITY ASSESSMENT
                 </div>
 
-                <div class="severity-value ${normalizeSeverity(
-                    parsed.severity
-                )}">
+
+                <div
+                    class="severity-value ${normalizeSeverity(
+                        parsed.severity
+                    )}"
+                >
+
                     ${escapeHTML(
                         parsed.severity ||
                         "Unknown"
                     )}
+
                 </div>
+
 
                 <div class="severity-description">
                     Estimated impact level based on the incident description.
@@ -1406,7 +1911,9 @@ function formatReportForHistory(
 
         </article>
 
+
         <div class="analysis-grid">
+
 
             ${historyCard(
                 "01",
@@ -1415,6 +1922,7 @@ function formatReportForHistory(
                 parsed.symptoms
             )}
 
+
             ${historyCard(
                 "02",
                 "PROBABLE",
@@ -1422,6 +1930,7 @@ function formatReportForHistory(
                 parsed.rootCauses,
                 true
             )}
+
 
             ${historyCard(
                 "03",
@@ -1432,6 +1941,7 @@ function formatReportForHistory(
 
         </div>
 
+
         <article class="summary-panel">
 
             <div class="summary-header">
@@ -1439,6 +1949,7 @@ function formatReportForHistory(
                 <div class="card-index">
                     04
                 </div>
+
 
                 <div>
 
@@ -1454,16 +1965,21 @@ function formatReportForHistory(
 
             </div>
 
+
             <div class="summary-content">
+
                 ${escapeHTML(
                     parsed.summary ||
                     "—"
                 )}
+
             </div>
 
         </article>
+
     `;
 }
+
 
 // ============================================================
 // HISTORY CARD
@@ -1481,11 +1997,14 @@ function historyCard(
 
         <article class="analysis-card">
 
+
             <div class="card-header">
+
 
                 <div class="card-index">
                     ${index}
                 </div>
+
 
                 <div>
 
@@ -1499,7 +2018,9 @@ function historyCard(
 
                 </div>
 
+
             </div>
+
 
             <div class="card-content">
 
@@ -1510,9 +2031,12 @@ function historyCard(
 
             </div>
 
+
         </article>
+
     `;
 }
+
 
 // ============================================================
 // SYSTEM STATUS
@@ -1525,13 +2049,16 @@ async function renderSystemStatus() {
             "#dynamicView"
         );
 
+
     if (!dynamicView) {
         return;
     }
 
+
     dynamicView.innerHTML = `
 
         <div class="view-panel-header">
+
 
             <div>
 
@@ -1539,9 +2066,11 @@ async function renderSystemStatus() {
                     LOCAL INFRASTRUCTURE
                 </div>
 
+
                 <h1 class="view-panel-title">
                     System Status
                 </h1>
+
 
                 <p class="view-panel-description">
                     Live status information for the IncidentLens AI local runtime.
@@ -1549,17 +2078,24 @@ async function renderSystemStatus() {
 
             </div>
 
+
             <div
                 class="view-status"
                 id="overallStatus"
             >
+
                 <span class="view-status-dot"></span>
+
                 CHECKING
+
             </div>
+
 
         </div>
 
+
         <div class="status-grid">
+
 
             ${statusCard(
                 "AI Engine",
@@ -1568,6 +2104,7 @@ async function renderSystemStatus() {
                 "aiEngineStatus"
             )}
 
+
             ${statusCard(
                 "API",
                 "Checking...",
@@ -1575,12 +2112,14 @@ async function renderSystemStatus() {
                 "apiStatus"
             )}
 
+
             ${statusCard(
                 "Model",
                 "Qwen 3.5 · 4B",
                 "Local language model",
                 "modelStatus"
             )}
+
 
             ${statusCard(
                 "Runtime",
@@ -1591,18 +2130,22 @@ async function renderSystemStatus() {
 
         </div>
 
+
         <div class="status-summary">
 
             <div class="status-summary-label">
                 EXECUTION MODE
             </div>
 
+
             <div class="status-summary-value">
                 Local inference — incident data stays on the local runtime.
             </div>
 
         </div>
+
     `;
+
 
     try {
 
@@ -1611,6 +2154,7 @@ async function renderSystemStatus() {
                 `${API_URL}/api/health`
             );
 
+
         if (!response.ok) {
 
             throw new Error(
@@ -1618,8 +2162,10 @@ async function renderSystemStatus() {
             );
         }
 
+
         const data =
             await response.json();
+
 
         setStatusCard(
             "apiStatus",
@@ -1627,6 +2173,7 @@ async function renderSystemStatus() {
             "Backend responding normally.",
             true
         );
+
 
         setStatusCard(
             "aiEngineStatus",
@@ -1639,6 +2186,7 @@ async function renderSystemStatus() {
             true
         );
 
+
         setStatusCard(
             "modelStatus",
             data.model_loaded
@@ -1650,6 +2198,7 @@ async function renderSystemStatus() {
             true
         );
 
+
         setStatusCard(
             "runtimeStatus",
             "Operational",
@@ -1657,18 +2206,24 @@ async function renderSystemStatus() {
             true
         );
 
+
         const overall =
             document.querySelector(
                 "#overallStatus"
             );
 
+
         if (overall) {
 
             overall.innerHTML = `
+
                 <span class="view-status-dot"></span>
+
                 OPERATIONAL
+
             `;
         }
+
 
     } catch (error) {
 
@@ -1679,12 +2234,14 @@ async function renderSystemStatus() {
             false
         );
 
+
         setStatusCard(
             "aiEngineStatus",
             "Unavailable",
             "AI engine cannot be verified.",
             false
         );
+
 
         setStatusCard(
             "modelStatus",
@@ -1693,6 +2250,7 @@ async function renderSystemStatus() {
             false
         );
 
+
         setStatusCard(
             "runtimeStatus",
             "Unknown",
@@ -1700,10 +2258,12 @@ async function renderSystemStatus() {
             false
         );
 
+
         const overall =
             document.querySelector(
                 "#overallStatus"
             );
+
 
         if (overall) {
 
@@ -1713,13 +2273,18 @@ async function renderSystemStatus() {
             overall.style.background =
                 "var(--red-soft)";
 
+
             overall.innerHTML = `
+
                 <span class="view-status-dot"></span>
+
                 DEGRADED
+
             `;
         }
     }
 }
+
 
 // ============================================================
 // STATUS CARD
@@ -1736,11 +2301,14 @@ function statusCard(
 
         <article class="status-card">
 
+
             <div class="status-card-header">
+
 
                 <div class="status-card-name">
                     ${title}
                 </div>
+
 
                 <div
                     class="status-pill"
@@ -1753,7 +2321,9 @@ function statusCard(
 
                 </div>
 
+
             </div>
+
 
             <div
                 class="status-card-value"
@@ -1762,13 +2332,17 @@ function statusCard(
                 ${value}
             </div>
 
+
             <div class="status-card-detail">
                 ${detail}
             </div>
 
+
         </article>
+
     `;
 }
+
 
 // ============================================================
 // UPDATE STATUS CARD
@@ -1786,29 +2360,36 @@ function setStatusCard(
             `#${id}`
         );
 
+
     if (!pill) {
         return;
     }
+
 
     pill.classList.toggle(
         "offline",
         !online
     );
 
+
     pill.innerHTML = `
 
         <span class="status-pill-dot"></span>
 
-        ${online
-            ? "ONLINE"
-            : "OFFLINE"
+        ${
+            online
+                ? "ONLINE"
+                : "OFFLINE"
         }
+
     `;
+
 
     const valueElement =
         document.querySelector(
             `[data-value="${id}"]`
         );
+
 
     if (valueElement) {
 
@@ -1816,15 +2397,18 @@ function setStatusCard(
             value;
     }
 
+
     const card =
         pill.closest(
             ".status-card"
         );
 
+
     const detailElement =
         card?.querySelector(
             ".status-card-detail"
         );
+
 
     if (detailElement) {
 
@@ -1832,6 +2416,7 @@ function setStatusCard(
             detail;
     }
 }
+
 
 // ============================================================
 // SEVERITY
@@ -1843,8 +2428,9 @@ function normalizeSeverity(
 
     const value =
         String(
-            severity
+            severity || ""
         ).toLowerCase();
+
 
     if (
         value.includes(
@@ -1854,6 +2440,7 @@ function normalizeSeverity(
         return "critical";
     }
 
+
     if (
         value.includes(
             "high"
@@ -1861,6 +2448,7 @@ function normalizeSeverity(
     ) {
         return "high";
     }
+
 
     if (
         value.includes(
@@ -1870,6 +2458,7 @@ function normalizeSeverity(
         return "medium";
     }
 
+
     if (
         value.includes(
             "low"
@@ -1878,8 +2467,10 @@ function normalizeSeverity(
         return "low";
     }
 
+
     return "medium";
 }
+
 
 // ============================================================
 // DATE
@@ -1910,6 +2501,7 @@ function formatDate(
     }
 }
 
+
 // ============================================================
 // HTML ESCAPE
 // ============================================================
@@ -1923,11 +2515,14 @@ function escapeHTML(
             "div"
         );
 
+
     div.textContent =
         text ?? "";
 
+
     return div.innerHTML;
 }
+
 
 // ============================================================
 // PUBLIC API
@@ -1942,7 +2537,9 @@ window.IncidentLens = {
     checkBackend,
 
     showView
+
 };
+
 
 // ============================================================
 // CONSOLE
